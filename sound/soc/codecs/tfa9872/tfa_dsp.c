@@ -4965,7 +4965,7 @@ tfa_dsp_handle_event(tfa98xx_handle_t handle,
 		err = tfa_start
 			(handles_local[handle].profile,
 			 handles_local[handle].vstep);
-		if (err == tfa_error_ok) {
+		if (err == TFA98XX_ERROR_OK) {
 			handles_local[handle].ext_dsp = 2; /* set warm */
 			handles_local[handle].is_cold = 0;
 			retval = 0;
