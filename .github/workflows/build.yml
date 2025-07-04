@@ -1,7 +1,7 @@
 name: Kernel Build
 
 on:
-  workflow_dispatch:  # Manuel başlatma
+  workflow_dispatch:
 
 jobs:
   build:
@@ -17,12 +17,15 @@ jobs:
         sudo apt install -y bc bison flex libssl-dev make \
           python3 python-is-python3 git zip unzip \
           ccache libncurses5-dev libncursesw5-dev \
-          clang lld wget curl
+          clang lld llvm llvm-dev wget curl
 
     - name: build.sh çalıştır
       run: |
         chmod +x build.sh
         ./build.sh
+
+    - name: Derleme çıktısını listele
+      run: ls -al out/arch/arm64/boot/ || echo "Image bulunamadı"
 
     - name: Image dosyasını artifact olarak yükle
       uses: actions/upload-artifact@v4
