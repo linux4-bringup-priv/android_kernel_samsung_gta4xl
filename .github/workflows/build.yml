@@ -9,7 +9,7 @@ jobs:
 
     steps:
     - name: Repo'yu klonla
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Gerekli bağımlılıkları yükle
       run: |
@@ -25,7 +25,7 @@ jobs:
         ./build.sh
 
     - name: Image dosyasını artifact olarak yükle
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Kernel-Image
         path: out/arch/arm64/boot/Image
