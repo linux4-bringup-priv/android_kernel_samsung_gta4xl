@@ -1,34 +1,49 @@
-name: Kernel Build
+name: Cherry Pick from Remote
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # Elle başlatmak için
 
 jobs:
-  build:
+  cherry-pick:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Repo'yu klonla
+    - name: Bu repoyu klonla
       uses: actions/checkout@v4
 
-    - name: Gerekli bağımlılıkları yükle
+    - name: Git kullanıcı bilgilerini ayarla
       run: |
-        sudo apt update
-        sudo apt install -y bc bison flex libssl-dev make \
-          python3 python-is-python3 git zip unzip \
-          ccache libncurses5-dev libncursesw5-dev \
-          clang lld llvm llvm-dev wget curl
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-    - name: build.sh çalıştır
+    - name: Kaynak repoyu ekle ve fetch et
       run: |
-        chmod +x build.sh
-        ./build.sh
+        git remote add upstream https://github.com/sundrams-playground/kernel_samsung_exynos9610.git
+        git fetch upstream wip/init/sar_ramdisk
 
-    - name: Derleme çıktısını listele
-      run: ls -al out/arch/arm64/boot/ || echo "Image bulunamadı"
+    - name: Yeni branch oluştur
+      run: |
+        git checkout -b cherry-pick-upstream
 
-    - name: Image dosyasını artifact olarak yükle
-      uses: actions/upload-artifact@v4
-      with:
-        name: Kernel-Image
-        path: out/arch/arm64/boot/Image
+    - name: Cherry-pick işlemi
+      run: |
+        COMMITS=(
+          e79f371ee2654dffc9ecc0ef1a5bb14f63ea7bd4
+          9f8f6721ee1504900a8154516743240cfea00b1a
+          a5fbf791ef2f843ab927479ac64c988412def0cf
+          6f2d3fc1d627f6342a6652bcb4d691fd71312e042
+          ecdab50e91645b9bf3224e9ff26a777613984746
+          6d213829dba6b11b066b36ff76d998d6e25fb12
+        )
+
+        for commit in "${COMMITS[@]}"; do
+          echo "Cherry-picking $commit..."
+          git cherry-pick $commit || {
+            echo "⛔ Çatışma oluştu: $commit"
+            exit 1
+          }
+        done
+
+    - name: Push changes to origin
+      run: |
+        git push origin cherry-pick-upstream --force
