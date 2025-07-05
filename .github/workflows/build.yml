@@ -19,7 +19,7 @@ jobs:
     - name: Kaynak repoyu ekle ve fetch et
       run: |
         git remote add upstream https://github.com/sundrams-playground/kernel_samsung_exynos9610.git
-        git fetch upstream wip/init/sar_ramdisk
+        git fetch upstream wip
 
     - name: Yeni branch oluştur
       run: |
