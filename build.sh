@@ -51,10 +51,8 @@ make -j$(nproc --all) O="$OUT_DIR" \
     STRIP=llvm-strip \
     Image
 
-# Başarı kontrolü
-IMAGE_PATH="$OUT_DIR/arch/arm64/boot/Image"
-if [ -f "$IMAGE_PATH" ]; then
-    echo ">>> ✅ $DEVICE için kernel başarıyla derlendi!"
+if [ -f "$OUT_DIR/arch/arm64/boot/Image" ]; then
+    echo ">>> ✔ Kernel başarıyla derlendi!"
 else
     echo ">>> ❌ Kernel derlemesi başarısız oldu."
     exit 1
