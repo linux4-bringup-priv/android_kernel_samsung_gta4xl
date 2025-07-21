@@ -7853,7 +7853,7 @@ done:
 #ifdef CONFIG_SCSC_WLAN_DYNAMIC_ITO
 int slsi_set_ito(struct net_device *dev, char *command, int buf_len)
 {
-	int ret = 0;
+	int ret;
 	struct netdev_vif *ndev_vif = netdev_priv(dev);
 	struct slsi_dev   *sdev = ndev_vif->sdev;
 	struct slsi_ioctl_args *ioctl_args = NULL;
