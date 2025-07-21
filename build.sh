@@ -17,7 +17,7 @@ rm -rf "$OUT_DIR" "$TOOLCHAIN_DIR"
 mkdir -p "$TOOLCHAIN_DIR" "$OUT_DIR"
 
 # Toolchain indir
-echo ">>> WeebX Clang indiriliyor..."
+echo "[INFO] WeebX Clang indiriliyor..."
 wget -q "$(curl -s https://raw.githubusercontent.com/XSans0/WeebX-Clang/main/main/link.txt)" -O weebx-clang.tar.gz
 tar -xvf weebx-clang.tar.gz -C "$TOOLCHAIN_DIR"
 rm weebx-clang.tar.gz
@@ -31,15 +31,15 @@ export CLANG_TRIPLE="$CLANG_PATH/bin/aarch64-linux-gnu-"
 export PATH="$CLANG_PATH/bin:$PATH"
 
 # Temizleme
-echo ">>> Temiz build başlatılıyor..."
+echo "[INFO] Temiz build başlatılıyor..."
 make O="$OUT_DIR" mrproper
 
 # Defconfig
-echo ">>> Defconfig uygulanıyor: $DEFCONFIG"
+echo "[INFO] Defconfig uygulanıyor: $DEFCONFIG"
 make O="$OUT_DIR" "$DEFCONFIG"
 
 # Derleme (sadece Image)
-echo ">>> Kernel derleniyor ...
+echo "[INFO] Kernel derleniyor (yalnızca Image)..."
 make -j$(nproc --all) O="$OUT_DIR" \
     LLVM=1 LLVM_IAS=1 \
     CC=clang \
@@ -51,9 +51,13 @@ make -j$(nproc --all) O="$OUT_DIR" \
     STRIP=llvm-strip \
     Image
 
-if [ -f "$OUT_DIR/arch/arm64/boot/Image" ]; then
-    echo ">>> ✔ Kernel başarıyla derlendi!"
+# Başarı kontrolü
+IMAGE_PATH="$OUT_DIR/arch/arm64/boot/Image"
+if [ -f "$IMAGE_PATH" ]; then
+    echo "[SUCCESS] $DEVICE için kernel başarıyla derlendi!"
+    echo "[OUTPUT] Image dosyası yolu: $IMAGE_PATH"
+    echo "::notice title=Kernel Build::$IMAGE_PATH"
 else
-    echo ">>> ❌ Kernel derlemesi başarısız oldu."
+    echo "[ERROR] Kernel derlemesi başarısız oldu."
     exit 1
 fi
