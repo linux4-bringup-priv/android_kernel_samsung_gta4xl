@@ -1,0 +1,32 @@
+name: Kernel Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        device: [gta4xl, gta4xlwifi]
+
+    steps:
+      - name: 📥 Repo klonla
+        uses: actions/checkout@v3
+
+      - name: 🛠️ Gerekli paketleri kur
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bc bison flex libssl-dev make gcc clang \
+              python3 python3-pip libelf-dev libncurses-dev git wget curl tar xz-utils
+
+      - name: 🔧 Derleme scriptini çalıştır
+        run: |
+          chmod +x build_kernel.sh
+          ./build_kernel.sh ${{ matrix.device }}
+
+      - name: 📦 Artifact yükle (Image)
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-image-${{ matrix.device }}
+          path: out/arch/arm64/boot/Image
