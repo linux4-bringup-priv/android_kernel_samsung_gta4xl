@@ -22,8 +22,8 @@ jobs:
 
       - name: 🔧 Derleme scriptini çalıştır
         run: |
-          chmod +x build_kernel.sh
-          ./build_kernel.sh ${{ matrix.device }}
+          chmod +x build.sh
+          ./build.sh ${{ matrix.device }}
 
       - name: 📦 Artifact yükle (Image)
         uses: actions/upload-artifact@v4
